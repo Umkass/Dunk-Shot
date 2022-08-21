@@ -45,6 +45,7 @@ public class Net : MonoBehaviour
                 this.ball = ball;
                 ball.MakeKinematic();
                 ball.wasPushed = false;
+                GameManager.Instance.NetSound();
             }
         }
     }

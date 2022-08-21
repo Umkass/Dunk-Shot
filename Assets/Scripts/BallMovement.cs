@@ -51,11 +51,13 @@ public class BallMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Bound")) // wall bound
         {
             isTouchedBound = true;
+            GameManager.Instance.WallSound();
         }
         if (collision.gameObject.CompareTag("HoopBound")) //hoop bound
         {
             isTouchedHoopBound = true;
             PerfectX = 0;
+            GameManager.Instance.HoopSound();
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -91,6 +93,7 @@ public class BallMovement : MonoBehaviour
             Star star = collision.GetComponent<Star>();
             star.isScored = true;
             UIManager.Instance.AddStarPoints();
+            GameManager.Instance.StarSound();
             Destroy(collision.gameObject);
         }
     }

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,15 +20,9 @@ public class SwitchToggle : MonoBehaviour
 
     void Switch(bool isOn)
     {
-        rtCheckmark.anchoredPosition = isOn? checkmarkPos : checkmarkPos * -1;
+        rtCheckmark.anchoredPosition = isOn ? checkmarkPos : checkmarkPos * -1;
         toggle.targetGraphic.color = isOn ? onColor : offColor;
         label.alignment = isOn ? TextAnchor.MiddleLeft : TextAnchor.MiddleRight;
-        label.text = isOn ? "ON": "OFF";
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        label.text = isOn ? "ON" : "OFF";
     }
 }

@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Field : MonoBehaviour
+public class GameField : MonoBehaviour
 {
     SpriteRenderer srField;
     [SerializeField] SpriteRenderer[] srBounds;
@@ -11,7 +9,7 @@ public class Field : MonoBehaviour
     Color darkColorField = new Color(0.2235294f, 0.2235294f, 0.2235294f);
     Color darkColorBounds = new Color(0.1568628f, 0.1568628f, 0.1568628f);
     bool isLight = true;
-    // Start is called before the first frame update
+
     void Start()
     {
         srField = GetComponent<SpriteRenderer>();

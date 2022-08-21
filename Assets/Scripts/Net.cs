@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Net : MonoBehaviour
@@ -9,7 +7,7 @@ public class Net : MonoBehaviour
     float maxScaleY = 0.469f;
     float maxPosY = -0.528f;
     float maxballPosY = -0.83f;
-    public BallMovement ball;
+    BallMovement ball;
     public void StretchNet(float force, float maxForce)
     {
         Vector3 newPosNet = transform.localPosition;
@@ -38,7 +36,7 @@ public class Net : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         BallMovement ball = collision.gameObject.GetComponent<BallMovement>();
-        if(ball != null)
+        if (ball != null)
         {
             if (ball.wasPushed)
             {

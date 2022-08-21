@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public enum GameStates
@@ -12,17 +11,18 @@ public enum GameStates
 }
 public class GameManager : Singleton<GameManager>
 {
-    public GameStates state = GameStates.Menu;
+    public GameStates currentState = GameStates.Menu;
+    [SerializeField] public EventSystem es;
 
     public void RestartGame()
     {
-        state = GameStates.Menu;
+        currentState = GameStates.Menu;
         SceneManager.LoadScene("Game", LoadSceneMode.Single);
     }
     public void GoToMainMenu()
     {
         Time.timeScale = 1;
-        state = GameStates.Menu;
+        currentState = GameStates.Menu;
         SceneManager.LoadScene("Game", LoadSceneMode.Single);
     }
 }

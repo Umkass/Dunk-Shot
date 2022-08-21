@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3766854838762869498}
   - component: {fileID: 5724048334015264281}
-  - component: {fileID: 8803222064343706804}
   m_Layer: 0
   m_Name: TrajectoryDot
   m_TagString: Untagged
@@ -83,16 +82,3 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8803222064343706804
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6288736206437119922}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ee616c272ed95f499a5aac7ec49e379, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sr: {fileID: 0}

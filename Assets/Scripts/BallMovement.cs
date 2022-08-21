@@ -1,24 +1,25 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class BallMovement : MonoBehaviour
 {
     public Spawner spawner;
+
     [SerializeField] Rigidbody2D rb;
     [SerializeField] float defaultForce;
+
     Queue<Hoop> hoops = new Queue<Hoop>();
     public Hoop currentHoop;
     bool firstHoopCompleted = false; //not initial
     public bool canPush = true;
+    public bool wasPushed = true;
 
     bool isTouchedBound = false;
     bool isTouchedHoopBound = false;
-    int multiBounce = 2; //число на которое умножить при отскоке
-    int PerfectX = 0; //комбо перфект
+    int multiBounce = 2; //number to multiply when rebounding
+    int PerfectX = 0; //combo "Perfect"
+
     float timeToStuck = 5f;
-    public bool wasPushed = true;
 
     public void Push(Vector2 force)
     {
@@ -39,14 +40,19 @@ public class BallMovement : MonoBehaviour
         rb.isKinematic = false;
         rb.constraints = RigidbodyConstraints2D.None;
     }
+    public void Unstuck()
+    {
+        gameObject.transform.position = new Vector2(currentHoop.transform.position.x, currentHoop.transform.position.y + 1f);
+    }
 
+    #region Collisions
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Bound"))
+        if (collision.gameObject.CompareTag("Bound")) // wall bound
         {
             isTouchedBound = true;
         }
-        if (collision.gameObject.CompareTag("HoopBound"))
+        if (collision.gameObject.CompareTag("HoopBound")) //hoop bound
         {
             isTouchedHoopBound = true;
             PerfectX = 0;
@@ -54,42 +60,51 @@ public class BallMovement : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Hoop"))
+        if (collision.CompareTag("Hoop")) //hoop
         {
             Hoop hoop = collision.GetComponent<Hoop>();
             canPush = true;
-            if (!hoop.isFirstHoop && hoop != currentHoop)
-            {
-                hoops.Enqueue(hoop);
-                currentHoop = hoop;
-                firstHoopCompleted = true;
-                hoop.HoopCompleted();
-                spawner.SpawnNewHoop(transform.position);
-                hoops.Dequeue().Disappear();
-                if (!isTouchedHoopBound)
+            if (hoop != currentHoop)
+                if (!hoop.isFirstHoop)
                 {
-                    PerfectX++;
+                    hoops.Enqueue(hoop);
+                    currentHoop = hoop;
+                    firstHoopCompleted = true;
+                    hoop.HoopCompleted();
+                    spawner.SpawnNextHoop(transform.position);
+                    hoops.Dequeue().Disappear();
+                    if (!isTouchedHoopBound)
+                    {
+                        PerfectX++;
+                    }
+                    ScorePoints();
                 }
-                ScorePoints();
-            }
-            else if(hoop.isFirstHoop && hoop != currentHoop)
-            {
-                hoops.Enqueue(hoop);
-                currentHoop = hoop;
-            }
+                else
+                {
+                    hoops.Enqueue(hoop);
+                    currentHoop = hoop;
+                }
             hoop.SetDefaultRotation();
         }
-        if (collision.CompareTag("Star") && !collision.GetComponent<Star>().isScored)
+        if (collision.CompareTag("Star") && !collision.GetComponent<Star>().isScored) //star
         {
             Star star = collision.GetComponent<Star>();
-            if (!star.isScored)
-            {
-                star.isScored = true;
-                UIManager.Instance.AddStarPoints();
-                Destroy(collision.gameObject);
-            }
+            star.isScored = true;
+            UIManager.Instance.AddStarPoints();
+            Destroy(collision.gameObject);
         }
     }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        Hoop hoop = collision.GetComponent<Hoop>();
+        if (hoop != null)
+        {
+            canPush = false;
+            wasPushed = true;
+        }
+    }
+    #endregion
 
     private void ScorePoints() //посчитать очки
     {
@@ -109,32 +124,19 @@ public class BallMovement : MonoBehaviour
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        Hoop hoop = collision.GetComponent<Hoop>();
-        if (hoop != null)
-        {
-            canPush = false;
-            wasPushed = true;
-        }
-    }
-
-    public void Unstuck()
-    {
-        gameObject.transform.position = new Vector2(currentHoop.transform.position.x, currentHoop.transform.position.y + 1f);
-    }
     private void Update()
     {
-        if (transform.parent == null) // летит
+        if (transform.parent == null) // flying
         {
             transform.Rotate(Vector3.forward * 270 * Time.deltaTime);
-            timeToStuck-=Time.deltaTime;
-            if (timeToStuck <= 0)
+            timeToStuck -= Time.deltaTime;
+            if (timeToStuck <= 0) // stuck?
             {
                 UIManager.Instance.ShowBtnStuck();
                 timeToStuck = 5f;
             }
         }
+
         if (FieldBounds.OutOfFieldBounds(gameObject.transform.position))
         {
             if (firstHoopCompleted)

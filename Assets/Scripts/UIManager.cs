@@ -1,37 +1,50 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
     [SerializeField] RectTransform UIScaler;
-    [SerializeField] GameObject pauseMenu;
-    [SerializeField] GameObject settingsMenu;
+    [SerializeField]
+    GameObject pauseMenu,
+        settingsMenu,
+        logo,
+        bottomBar,
+        finger;
+
+
     [SerializeField]
     Button btnSettingsMainMenu,
         btnLightMode,
         btnBack,
-        btnRestart,
-        btnSettingsGameOver,
         btnStuck;
-    public Button btnPause;
+
+    [Header("GameOverBtns")]
+    [Space]
     [SerializeField]
-    GameObject logo,
-        bottomBar,
-        finger;
-    [SerializeField] EventSystem es;
+    Button btnSettingsGameOver;
+    [SerializeField]
+    Button btnRestart;
+
+    [Header("PauseBtns")]
+    [Space]
+    [SerializeField]
+    Button btnPause;
+    [SerializeField]
+    Button btnMainMenu,
+        btnCustomize,
+        btnLeaderBoards,
+        btnResume;
+
+    [Space]
     [SerializeField] Text txtStar;
     [SerializeField] int starPoint = 0;
     [SerializeField] TMP_Text txtScorePoint;
     public int scorePoint = 0;
     [SerializeField] TMP_Text bestScorePoint;
     [SerializeField] Text nameOfMenu;
-    public Field field;
 
+    [HideInInspector] public GameField gameField;
     public Image background;
     [SerializeField] Image settingsBackground;
     Color lightColorBackground = new Color(0.9137256f, 0.9137256f, 0.9137256f, 0.95f);
@@ -52,54 +65,39 @@ public class UIManager : Singleton<UIManager>
 
         if ((PlayerPrefs.GetInt("LightMode") != 0))
         {
-            Debug.Log("lightColorBackground");
             background.color = lightColorBackground;
         }
         else
         {
-            Debug.Log("darkColorBackground");
             background.color = darkColorBackground;
         }
-        //if (ScreenBounds.bounds.x > 2.7f)
+
         UIScaler.sizeDelta = new Vector2(Screen.width - Screen.width * (ScreenBounds.bounds.x - 2.7f) / ScreenBounds.bounds.x, UIScaler.sizeDelta.y);
 
         SetupUIMenu();
-        btnPause.onClick.AddListener(() =>
-        {
-            PauseGame();
-        });
 
+        #region btns
         btnLightMode.onClick.AddListener(() =>
         {
-            field.ChangeLightMode();
+            gameField.ChangeLightMode();
             ChangeLightMode();
-        });
-        btnRestart.onClick.AddListener(() =>
-        {
-            GameManager.Instance.RestartGame();
         });
         btnStuck.onClick.AddListener(() =>
         {
-
             HideBtnStuck();
             BallMovement ball = FindObjectOfType<BallMovement>();
             ball.Unstuck();
         });
-        btnSettingsGameOver.onClick.AddListener(() =>
-        {
-            Settings();
-        });
-        btnSettingsMainMenu.onClick.AddListener(() =>
-        {
-            Settings();
-        });
-        btnBack.onClick.AddListener(() =>
-        {
-            Back();
-        });
+        btnPause.onClick.AddListener(PauseGame);
+        btnRestart.onClick.AddListener(GameManager.Instance.RestartGame);
+        btnSettingsGameOver.onClick.AddListener(Settings);
+        btnSettingsMainMenu.onClick.AddListener(Settings);
+        btnBack.onClick.AddListener(Back);
+        btnResume.onClick.AddListener(ResumeGame);
+        btnMainMenu.onClick.AddListener(GameManager.Instance.GoToMainMenu);
+        #endregion
 
     }
-
     void SetupUIMenu()
     {
         nameOfMenu.gameObject.SetActive(false);
@@ -119,9 +117,9 @@ public class UIManager : Singleton<UIManager>
         logo.SetActive(true);
         bottomBar.SetActive(true);
         finger.SetActive(true);
-        GameManager.Instance.state = GameStates.Menu;
+        GameManager.Instance.currentState = GameStates.Menu;
     }
-    public void SetupUIPlay()
+    void SetupUIPlay()
     {
         btnSettingsMainMenu.gameObject.SetActive(false);
         btnLightMode.gameObject.SetActive(false);
@@ -133,62 +131,13 @@ public class UIManager : Singleton<UIManager>
         logo.SetActive(false);
         bottomBar.SetActive(false);
         finger.SetActive(false);
-        GameManager.Instance.state = GameStates.Play;
         txtScorePoint.text = scorePoint.ToString();
-    }
-    void PauseGame()
-    {
-        pauseMenu.SetActive(true);
-        btnPause.gameObject.SetActive(false);
-        background.gameObject.SetActive(true);
-        GameManager.Instance.state = GameStates.Pause;
-        Time.timeScale = 0;
-    }
-
-    void Settings()
-    {
-        settingsMenu.SetActive(true);
-        background.gameObject.SetActive(true);
-        settingsBackground.gameObject.SetActive(true);
-        nameOfMenu.text = "SETTINGS";
-        nameOfMenu.gameObject.SetActive(true);
-        btnBack.gameObject.SetActive(true);
-        if (GameManager.Instance.state == GameStates.Menu)
-        {
-            btnSettingsMainMenu.gameObject.SetActive(false);
-            btnLightMode.gameObject.SetActive(false);
-        }
-    }
-    void Back()
-    {
-        if (GameManager.Instance.state == GameStates.Menu)
-        {
-            btnSettingsMainMenu.gameObject.SetActive(true);
-            btnLightMode.gameObject.SetActive(true);
-        }
-        else if(GameManager.Instance.state == GameStates.GameOver)
-        {
-
-        }
-        settingsMenu.SetActive(false);
-        background.gameObject.SetActive(false);
-        settingsBackground.gameObject.SetActive(false);
-        nameOfMenu.gameObject.SetActive(false);
-        btnBack.gameObject.SetActive(false);
-    }
-    public void ShowBtnStuck()
-    {
-        btnStuck.gameObject.SetActive(true);
-    }
-
-    public void HideBtnStuck()
-    {
-        btnStuck.gameObject.SetActive(false);
+        GameManager.Instance.currentState = GameStates.Play;
     }
 
     public void SetupUIGameOver()
     {
-        GameManager.Instance.state = GameStates.GameOver;
+        GameManager.Instance.currentState = GameStates.GameOver;
         if (PlayerPrefs.HasKey("bestScore"))
         {
             if (PlayerPrefs.GetInt("bestScore") < scorePoint)
@@ -211,19 +160,67 @@ public class UIManager : Singleton<UIManager>
         btnRestart.gameObject.SetActive(true);
         btnSettingsGameOver.gameObject.SetActive(true);
     }
-    public void ChangeLightMode()
+    void PauseGame()
     {
-        Debug.Log((PlayerPrefs.GetInt("LightMode") != 0));
+        pauseMenu.SetActive(true);
+        background.gameObject.SetActive(true);
+        btnPause.gameObject.SetActive(false);
+        GameManager.Instance.currentState = GameStates.Pause;
+        Time.timeScale = 0;
+    }
+    void ResumeGame()
+    {
+        pauseMenu.SetActive(false);
+        background.gameObject.SetActive(false);
+        btnPause.gameObject.SetActive(true);
+        GameManager.Instance.currentState = GameStates.Play;
+        Time.timeScale = 1;
+    }
+
+    void Settings()
+    {
+        settingsMenu.SetActive(true);
+        background.gameObject.SetActive(true);
+        settingsBackground.gameObject.SetActive(true);
+        nameOfMenu.text = "SETTINGS";
+        nameOfMenu.gameObject.SetActive(true);
+        btnBack.gameObject.SetActive(true);
+        if (GameManager.Instance.currentState == GameStates.Menu)
+        {
+            btnSettingsMainMenu.gameObject.SetActive(false);
+            btnLightMode.gameObject.SetActive(false);
+        }
+    }
+    void Back()
+    {
+        if (GameManager.Instance.currentState == GameStates.Menu)
+        {
+            btnSettingsMainMenu.gameObject.SetActive(true);
+            btnLightMode.gameObject.SetActive(true);
+        }
+        settingsMenu.SetActive(false);
+        background.gameObject.SetActive(false);
+        settingsBackground.gameObject.SetActive(false);
+        nameOfMenu.gameObject.SetActive(false);
+        btnBack.gameObject.SetActive(false);
+    }
+
+    public void ShowBtnStuck()
+    {
+        btnStuck.gameObject.SetActive(true);
+    }
+
+    void HideBtnStuck()
+    {
+        btnStuck.gameObject.SetActive(false);
+    }
+
+    void ChangeLightMode()
+    {
         if ((PlayerPrefs.GetInt("LightMode") != 0))
-        {
-            Debug.Log("lightColorBackground");
             background.color = lightColorBackground;
-        }
         else
-        {
-            Debug.Log("darkColorBackground");
             background.color = darkColorBackground;
-        }
     }
     public void AddStarPoints()
     {
@@ -232,24 +229,27 @@ public class UIManager : Singleton<UIManager>
     }
     public void AddScorePoints(int scoreToAdd)
     {
-        scorePoint +=scoreToAdd;
+        scorePoint += scoreToAdd;
         txtScorePoint.text = scorePoint.ToString();
     }
     private void Update()
     {
-        //Проверять на разных экранах
-#if UNITY_EDITOR
-        //ScreenBounds.UpdateScreenBounds();
-        //if (ScreenBounds.bounds.x > 2.7f)
+#if UNITY_EDITOR //To Check on different screens
         UIScaler.sizeDelta = new Vector2(Screen.width - Screen.width * (ScreenBounds.bounds.x - 2.7f) / ScreenBounds.bounds.x, UIScaler.sizeDelta.y);
 #endif
-        if (es.currentSelectedGameObject == null || (es.currentSelectedGameObject != null && es.currentSelectedGameObject.layer != 5))
+        if (GameManager.Instance.es.currentSelectedGameObject == null
+            || (GameManager.Instance.es.currentSelectedGameObject != null && GameManager.Instance.es.currentSelectedGameObject.layer != 5))
         {
-            if (Input.GetMouseButtonDown(0) && GameManager.Instance.state == GameStates.Menu)
+            if (Input.GetMouseButtonDown(0) && GameManager.Instance.currentState == GameStates.Menu)
             {
                 SetupUIPlay();
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        PlayerPrefs.SetInt("star", starPoint);
     }
 
     private void OnApplicationQuit()

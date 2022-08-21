@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FieldBounds : MonoBehaviour
@@ -18,18 +16,10 @@ public class FieldBounds : MonoBehaviour
         UpdateFieldBounds();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        UpdateFieldBounds();
-    }
-
     void UpdateFieldBounds()
     {
-        bounds = new Vector2(transform.position.x + transform.localScale.x/2, transform.position.y + transform.localScale.y/2);
+        bounds = new Vector2(transform.position.x + transform.localScale.x / 2, transform.position.y + transform.localScale.y / 2);
         fieldCenter = transform.position;
-        //Debug.Log(bounds);
-        //Debug.Log(fieldCenter);
     }
     public static bool OutOfRightBounds(Vector2 position)
     {
@@ -52,14 +42,12 @@ public class FieldBounds : MonoBehaviour
     {
         float horizontalPosition = Random.Range(left, fieldCenter.x - 0.5f);
         float verticalPosition = Random.Range(fieldCenter.y, top);
-        Debug.Log(new Vector2(horizontalPosition, verticalPosition));
         return new Vector2(horizontalPosition, verticalPosition);
     }
     public static Vector2 RandomTopRightPosition()
     {
         float horizontalPosition = Random.Range(fieldCenter.x + 0.5f, right);
         float verticalPosition = Random.Range(fieldCenter.y, top);
-        Debug.Log(new Vector2(horizontalPosition, verticalPosition));
         return new Vector2(horizontalPosition, verticalPosition);
     }
     public static bool OutOfFieldBounds(Vector2 position)
@@ -67,6 +55,10 @@ public class FieldBounds : MonoBehaviour
         float x = Mathf.Abs(position.x);
         float y = Mathf.Abs(position.y);
 
-        return (x > bounds.x || y > bounds.y - offsetY/2);
+        return (x > bounds.x || y > bounds.y - offsetY / 1.5);
+    }
+    void Update()
+    {
+        UpdateFieldBounds();
     }
 }

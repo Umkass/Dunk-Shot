@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Hoop : MonoBehaviour
@@ -9,17 +8,19 @@ public class Hoop : MonoBehaviour
     Color greyHoop = new Color(0.6666667f, 0.6666667f, 0.6666667f);
     public bool isFirstHoop;
     public GameObject starPrefab;
-    [Range(0f,1f)]
+
+    [Range(0f, 1f)]
     public float StarChance;
-    private void Awake()
+
+    void Awake()
     {
         foreach (var item in hoopSprites)
         {
             item.color = redHoop;
         }
-        if(!isFirstHoop && Random.Range(0f,1f) <= StarChance)
+        if (!isFirstHoop && Random.Range(0f, 1f) <= StarChance)
         {
-            Instantiate(starPrefab,transform);
+            Instantiate(starPrefab, transform);
         }
     }
     public void HoopCompleted()

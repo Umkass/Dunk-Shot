@@ -50,6 +50,19 @@ public class FieldBounds : MonoBehaviour
         float verticalPosition = Random.Range(fieldCenter.y, top);
         return new Vector2(horizontalPosition, verticalPosition);
     }
+
+    public static Vector2 RandomTopRightPositionWithAdditionOffset()
+    {
+        float horizontalPosition = Random.Range(fieldCenter.x + 0.5f, right - 0.25f);
+        float verticalPosition = Random.Range(fieldCenter.y, top);
+        return new Vector2(horizontalPosition, verticalPosition);
+    }
+    public static Vector2 RandomTopLeftPositionWithAdditionOffset()
+    {
+        float horizontalPosition = Random.Range(left+0.25f, fieldCenter.x - 0.5f);
+        float verticalPosition = Random.Range(fieldCenter.y, top);
+        return new Vector2(horizontalPosition, verticalPosition);
+    }
     public static bool OutOfFieldBounds(Vector2 position)
     {
         float x = Mathf.Abs(position.x);

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Net : MonoBehaviour
@@ -8,6 +9,7 @@ public class Net : MonoBehaviour
     float maxPosY = -0.528f;
     float maxballPosY = -0.83f;
     BallMovement ball;
+    [SerializeField] GameObject obstacle;
     public void StretchNet(float force, float maxForce)
     {
         Vector3 newPosNet = transform.localPosition;
@@ -46,7 +48,19 @@ public class Net : MonoBehaviour
                 ball.MakeKinematic();
                 ball.wasPushed = false;
                 GameManager.Instance.NetSound();
+                if(obstacle!=null)
+                    StartCoroutine(DisappearObstacleCoroutine());
             }
         }
+    }
+
+    IEnumerator DisappearObstacleCoroutine()
+    {
+        while (obstacle.transform.localScale.x > 0)
+        {
+            obstacle.transform.localScale = new Vector3(obstacle.transform.localScale.x - 0.05f, obstacle.transform.localScale.y - 0.05f);
+            yield return new WaitForEndOfFrame();
+        }
+        Destroy(obstacle);
     }
 }

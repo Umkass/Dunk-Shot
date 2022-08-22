@@ -5,6 +5,8 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] GameObject firstHoopPrefab;
     [SerializeField] GameObject defaultHoopPrefab;
+    [SerializeField] GameObject hoopWithLeftWallPrefab;
+    [SerializeField] GameObject hoopWithRightWallPrefab;
     [SerializeField] GameObject ballPrefab;
     [SerializeField] GameObject gameFieldPrefab;
     [SerializeField] GameObject gameFieldParent;
@@ -48,16 +50,9 @@ public class Spawner : MonoBehaviour
             {
                 case 0: Instantiate(defaultHoopPrefab, FieldBounds.RandomTopLeftPosition(), Quaternion.identity); break;
                 case 1: Instantiate(defaultHoopPrefab, FieldBounds.RandomTopLeftPosition(), Quaternion.Euler(0f, 0f, Random.Range(-15, -30f))); break;
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                case 9:
-                case 10:
+                case 2: Instantiate(hoopWithLeftWallPrefab, FieldBounds.RandomTopLeftPositionWithAdditionOffset(), Quaternion.identity); break;
                 default:
+                    Instantiate(defaultHoopPrefab, FieldBounds.RandomTopLeftPosition(), Quaternion.identity);
                     break;
             }
         }
@@ -67,26 +62,17 @@ public class Spawner : MonoBehaviour
             {
                 case 0: Instantiate(defaultHoopPrefab, FieldBounds.RandomTopRightPosition(), Quaternion.identity); break;
                 case 1: Instantiate(defaultHoopPrefab, FieldBounds.RandomTopRightPosition(), Quaternion.Euler(0f, 0f, Random.Range(15f, 30f))); break;
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                case 9:
-                case 10:
+                case 2: Instantiate(hoopWithRightWallPrefab, FieldBounds.RandomTopRightPositionWithAdditionOffset(), Quaternion.identity); break;
                 default:
+                    Instantiate(defaultHoopPrefab, FieldBounds.RandomTopRightPosition(), Quaternion.identity);
                     break;
             }
         }
-        //20+ wall-obstacle on the left or right (close to basket)
-        // 25+ moving up and down
-        // 30+ moving right and left
-        //30+ circle-obstacle  above the basket
+        // 30+ moving right and left/moving up and down
+        //40+ circle-obstacle above the basket
         //50+ wall-obstacle above the basket
         //60+ above ball with an wall-obstacleon the right or left (large)
-        //80+ vertical wall-obstacle above the basket
-        //100+ moving right left over ball (spawn with a turn)
+        //70+ vertical wall-obstacle above the basket
+        //80+ moving right left over ball (spawn with a turn)
     }
 }

@@ -78,10 +78,12 @@ public class BallMovement : MonoBehaviour
                     if (!isTouchedHoopBound)
                     {
                         PerfectX++;
+#if !UNITY_EDITOR
                         if (PerfectX >= 3 && (PlayerPrefs.GetInt("isVibrationOn") != 0))
                         {
                             Handheld.Vibrate(); //idk if it works
                         }
+#endif
                     }
                     ScorePoints();
                 }
@@ -111,7 +113,7 @@ public class BallMovement : MonoBehaviour
             wasPushed = true;
         }
     }
-    #endregion
+#endregion
 
     private void ScorePoints() //посчитать очки
     {

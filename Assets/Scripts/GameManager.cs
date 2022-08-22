@@ -53,4 +53,9 @@ public class GameManager : Singleton<GameManager>
         audioSource.clip = wallClip;
         audioSource.Play();
     }
+
+    public void MuteSounds(bool mute)
+    {
+        audioSource.mute = mute;
+    }
 }

@@ -24,6 +24,7 @@ public class InputHandler : MonoBehaviour
     }
     void Update()
     {
+#if UNITY_EDITOR
         if (GameManager.Instance.es.currentSelectedGameObject == null ||
             (GameManager.Instance.es.currentSelectedGameObject != null && GameManager.Instance.es.currentSelectedGameObject.layer != 5))
         {
@@ -31,11 +32,11 @@ public class InputHandler : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    OnDragStart();
+                    OnDragStart(Input.mousePosition);
                 }
                 if (Input.GetMouseButton(0))
                 {
-                    OnDrag();
+                    OnDrag(Input.mousePosition);
                 }
                 if (Input.GetMouseButtonUp(0))
                 {
@@ -43,17 +44,43 @@ public class InputHandler : MonoBehaviour
                 }
             }
         }
+#elif UNITY_ANDROID || UNITY_IOS
+        if (GameManager.Instance.es.currentSelectedGameObject == null ||
+    (GameManager.Instance.es.currentSelectedGameObject != null && GameManager.Instance.es.currentSelectedGameObject.layer != 5))
+        {
+            if (ball.canPush && GameManager.Instance.currentState == GameStates.Play)
+            {
+                if (Input.touchCount > 0)
+                {
+                    Touch touch = Input.GetTouch(0);
+                    if (touch.phase == TouchPhase.Began)
+                    {
+                        OnDragStart(touch.position);
+                    }
+                    if (touch.phase == TouchPhase.Moved)
+                    {
+                        OnDrag(touch.position);
+                    }
+
+                    if (touch.phase == TouchPhase.Ended)
+                    {
+                        OnDragEnd();
+                    }
+                }
+            }
+        }
+#endif
     }
 
-    void OnDragStart()
+    void OnDragStart(Vector3 position)
     {
         isDrugging = true;
         ball.MakeKinematic();
-        startPoint = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        startPoint = Camera.main.ScreenToViewportPoint(position);
     }
-    void OnDrag()
+    void OnDrag(Vector3 position)
     {
-        endPoint = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        endPoint = Camera.main.ScreenToViewportPoint(position);
         distance = Vector2.Distance(startPoint, endPoint) * 3f;
         direction = (startPoint - endPoint).normalized;
         force = direction * distance * pushForce;

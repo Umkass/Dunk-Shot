@@ -78,6 +78,10 @@ public class BallMovement : MonoBehaviour
                     if (!isTouchedHoopBound)
                     {
                         PerfectX++;
+                        if (PerfectX >= 3 && (PlayerPrefs.GetInt("isVibrationOn") != 0))
+                        {
+                            Handheld.Vibrate(); //idk if it works
+                        }
                     }
                     ScorePoints();
                 }

@@ -215,8 +215,9 @@ public class UIManager : Singleton<UIManager>
         btnStuck.gameObject.SetActive(false);
     }
 
-    void ChangeLightMode()
+    public void ChangeLightMode()
     {
+        Debug.Log("ChangeLightMode");
         if ((PlayerPrefs.GetInt("LightMode") != 0))
             background.color = lightColorBackground;
         else
@@ -236,7 +237,6 @@ public class UIManager : Singleton<UIManager>
     {
 #if UNITY_EDITOR //To Check on different screens
         UIScaler.sizeDelta = new Vector2(Screen.width - Screen.width * (ScreenBounds.bounds.x - 2.7f) / ScreenBounds.bounds.x, UIScaler.sizeDelta.y);
-#endif
         if (GameManager.Instance.es.currentSelectedGameObject == null
             || (GameManager.Instance.es.currentSelectedGameObject != null && GameManager.Instance.es.currentSelectedGameObject.layer != 5))
         {
@@ -245,6 +245,16 @@ public class UIManager : Singleton<UIManager>
                 SetupUIPlay();
             }
         }
+#elif UNITY_ANDROID || UNITY_IOS
+        if (GameManager.Instance.es.currentSelectedGameObject == null
+            || (GameManager.Instance.es.currentSelectedGameObject != null && GameManager.Instance.es.currentSelectedGameObject.layer != 5))
+        {
+            if (Input.touchCount > 0 && GameManager.Instance.currentState == GameStates.Menu)
+            {
+                SetupUIPlay();
+            }
+        }
+#endif
     }
 
     private void OnDestroy()

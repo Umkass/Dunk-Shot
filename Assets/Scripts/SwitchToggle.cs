@@ -6,7 +6,7 @@ public class SwitchToggle : MonoBehaviour
     [SerializeField] RectTransform rtCheckmark;
     [SerializeField] Text label;
     Vector2 checkmarkPos;
-    Toggle toggle;
+    public Toggle toggle;
     Color onColor = new Color(0.9921569f, 0.572549f, 0.0627451f);
     Color offColor = new Color(0.6705883f, 0.6705883f, 0.6705883f);
 
